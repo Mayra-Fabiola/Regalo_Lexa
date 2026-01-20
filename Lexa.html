@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUPONERA</title>
+</head>
+
+<body>
+    <style>
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e2b1c1 0%, #f4cfbb 50%, #f7e5bd 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        /* ----- HEADER PRINCIPAL ----- */
+        .main-header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+            padding: 0 15px;
+        }
+
+        .main-header h1 {
+            font-size: clamp(1.8em, 4vw, 4em); /* Tamaño responsivo */
+            font-weight: 900;
+            color: white;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            line-height: 1.3;
+            word-spacing: 0.1em;
+        }
+
+        .main-header .subtitle {
+            font-size: clamp(0.85em, 3.2vw, 1.5em);
+            color: rgba(255,255,255,0.95);
+            font-weight: 600;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+            line-height: 1.5;
+            max-width: 90%;
+            margin: 0 auto;
+        }
+
+        /*----- Animación de entrada -----*/
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /*----- Animación de rebote para los títulos de categoría -----*/
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .categoria-label {
+            text-align: center;
+            margin-bottom: 25px;
+            position: relative;
+            padding: 0 15px;
+        }
+
+        .categoria-label h2 {
+            display: inline-block;
+            font-size: clamp(1.2em, 4vw, 1.8em);
+            font-weight: 800;
+            color: white;
+            background: rgba(0,0,0,0.15);
+            padding: clamp(10px, 3vw, 15px) clamp(20px, 5vw, 40px);
+            border-radius: 50px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            letter-spacing: 1px;
+        }
+
+        /*----- Contenedor principal de los cupones -----*/
+        .container-cupon{
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 30px;
+            justify-content: center;
+            padding: 0 10px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /*----- Estilo del cupón -----*/
+        .cupon-cards {
+            --r: 30px;  /* radio de los círculos */
+            --bw: 15px;  /* ancho del borde */
+
+
+            display: flex; /* Los hijos se ponen uno al lado del otro por defecto */
+            flex-wrap: wrap; /* Permite que los items hagan el salto de linea si no existe más espacio */
+            position: relative; /* Para posicionar elementos hijos de forma absoluta si es necesario */
+
+            width: 100%; /* Ancho fijo para las tarjetas */
+            max-width: 380px; /* Ancho máximo para las tarjetas */
+            min-height: 180px; /* Alto mínimo para las tarjetas */
+
+            height: auto; /* Alto automático para ajustarse al contenido */
+
+            background: linear-gradient(135deg, var(--bg-1), var(--bg-2));
+            border-radius: 25px; /* Radio de las esquinas */
+
+            margin: 10px; /* Centrar horizontalmente */  
+            padding: 12px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0);
+            transition: all 0.3s ease; /* Transición suave para hover */
+            animation: fadeInUp 0.6s ease backwards; /* Animación de entrada */
+
+            /* Recortes circulares en las esquinas */
+            -webkit-mask:
+            linear-gradient(#000 0 0),
+            radial-gradient(circle var(--r) at top left, transparent 98%, #000 100%),
+            radial-gradient(circle var(--r) at top right, transparent 98%, #000 100%),
+            radial-gradient(circle var(--r) at bottom left, transparent 98%, #000 100%),
+            radial-gradient(circle var(--r) at bottom right, transparent 98%, #000 100%);
+
+             -webkit-mask-composite: destination-out;
+                mask-composite: exclude;
+        }
+
+        /*----- Borde punteado del cupón -----*/
+        .cupon-cards::before {
+            content: "";
+            position: absolute;
+            inset: 15px; /* Espacio desde los bordes para crear el efecto de borde */
+            border: 2px dotted var(--border-dot); /* Borde punteado */
+            border-radius: var(--r); /* Radio de las esquinas del borde */
+            pointer-events: none; /* Permite hacer clic a través del borde */
+
+            --r: 24px;
+
+            -webkit-mask:
+                linear-gradient(#000 0 0),
+                radial-gradient(circle var(--r) at top left, transparent 98%, #000 100%),
+                radial-gradient(circle var(--r) at top right, transparent 98%, #000 100%),
+                radial-gradient(circle var(--r) at bottom left, transparent 98%, #000 100%),
+                radial-gradient(circle var(--r) at bottom right, transparent 98%, #000 100%);
+
+            -webkit-mask-composite: destination-out;
+                    mask-composite: exclude;
+        }
+
+        /*----- Secciones del cupón -----*/
+        .seccion {
+            box-sizing: border-box; /* Incluye el padding y borde en el tamaño total */
+            padding: 10px;
+        }
+
+        .seccion.izquierda {
+            width: 25%;
+            border-right: 2px dotted var(--border-dot);
+
+            display: flex;
+            flex-direction: column;   /* vertical en desktop */
+            align-items: stretch;
+            justify-content: center;
+
+            gap: 12px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .seccion.derecha {
+            width: 75%;
+        }
+
+        .seccion.abajo {
+            width: 100%;
+            border-top: 2px dotted var(--border-dot);
+            font-size: 13px;
+        }
+
+        @media (max-width: 800px) {
+            .seccion.izquierda,
+            .seccion.derecha {
+                flex-direction: row;
+                width: 100%;
+                border-right: none;
+                border-bottom: 2px dotted var(--border-dot);
+            }
+
+            .seccion.abajo {
+                border-top: none;
+            }
+        }
+
+
+        /* Paleta 1 – Killjoy vibe */
+        .palette-killjoy {
+        --bg-1: #e06c71;
+        --bg-2: #f0a39d;
+        --border-dot: #a70101;
+        }
+
+        /* Paleta 2 – Samira vibe */
+        .palette-samira {
+        --bg-1: #f6b834;
+        --bg-2: #eac065;
+        --border-dot: #ffdbc5;
+        }
+
+        /* Paleta 3 – Leona / Diana vibe */
+        .palette-leona-diana {
+        --bg-1: #e3bbbc;
+        --bg-2: #e49c9d;
+        --border-dot: #cd0000;
+        }
+
+
+        /*----- Diseño responsivo -----*/
+        .palette-killjoy,
+        .palette-samira,
+        .palette-leona-diana {
+        display: flex; /* Los hijos se ponen uno al lado del otro por defecto */
+        flex-direction: row;      /* Los hijos se ponen uno al lado del otro */
+        gap: 30px;
+        justify-content: center;
+        }
+
+        @media(max-width: 800px) {
+            /* Cada grupo pasa a vertical */
+            .palette-killjoy,
+            .palette-samira,
+            .palette-leona-diana {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+            /* El cupón se adapta al ancho */
+            .cupon-cards {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            /* Ajustes en el estatus */
+            .estatus{
+            width: 100%;
+            box-sizing: border-box;
+
+            padding: 6px 8px;
+            text-align: center;
+
+            font-weight: bold;
+            line-height: 1.2;
+
+            border-radius: 14px;
+            white-space: normal;
+            word-break: break-word;
+            }
+            .usable{background:#8eb694;color:white;font-size: 10px;text-align: center;}
+            .reclamado{background:#f1c40f;color:black; font-size: 8px;}
+            .canjeado{background:#95a5a6;color:white; font-size: 8px;}
+
+            .campo{margin-bottom:12px;}
+            /* Ajustes en las líneas de texto editables */
+            .linea{
+            display: inline-block;
+            min-width: 180px;
+            border-bottom: 2px dotted rgba(0,0,0,0.4);
+            padding: 4px 8px;
+            font-weight: 400;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            }
+
+            .linea:focus {
+            outline: none;
+            background: rgba(255,255,255,0.6);
+            border-bottom-color: rgba(0,0,0,0.7);
+            }
+
+            /* Ajustes en el botón */
+            .btn{
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+
+            padding: 10px 8px;
+            text-align: center;
+
+            font-weight: bold;
+            line-height: 1.2;
+            font-size: 10px;
+
+            border-radius: 8px;
+            border: none;
+
+            background: #8eb694;
+            color: white;
+
+            cursor: pointer;
+
+            white-space: normal;
+            word-break: break-word;
+
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            }
+            .btn:disabled{
+            background:gray;
+            cursor:not-allowed;
+            }
+            .btn:active{
+            transform: scale(0.96);
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.25);
+            }
+
+            .btn,
+            .estatus{
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4);
+            }
+
+            .titulo{
+            font-size: 13px;
+            margin: 0;
+            color: rgba(0,0,0,0.7);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+            .subtitulo{
+            font-size: 24px;
+            font-weight: 900;
+            margin: 8px 0 20px;
+            color: rgba(0,0,0,0.9);
+            line-height: 1.2;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+            }
+
+
+            .cupon-cards.reclamado-anim{
+            animation: flash 0.4s ease;
+            }
+
+            @keyframes flash{
+            0%{ filter: brightness(1); }
+            50%{ filter: brightness(1.15); }
+            100%{ filter: brightness(1); }
+            }
+
+    </style>
+
+    <div class="main-header">
+        <h1>✨ FELIZ CUMPLEAÑOS LEXA ✨</h1>
+        <p class="subtitle">Todos los cupones deben ser reclamados antes de ser canjeados</p>
+    </div>
+
+    <div class="categoria-label">
+        <h2>🎮 Cupones Gaming</h2>
+    </div>
+
+    <div class="container-cupon">
+        <div class="palette-killjoy">
+
+            <div class="cupon-cards" data-cupon="cupon_videojuego" data-tipo="fijo">
+                <div class="seccion izquierda">
+                    <div class="estatus usable">USABLE</div>
+                    <button class="btn reclamar">Reclamar</button>
+                </div>
+
+                <div class="seccion derecha">
+                    <p class="titulo">Cupón válido por</p>
+                    <p class="subtitulo nombre-cupon">1 VIDEOJUEGO</p>
+                    <div class="campo">
+                        Plataforma:
+                        <span contenteditable="true" class="linea"></span>
+                    </div>
+                    <div class="campo">
+                        Nombre del juego:
+                        <span contenteditable="true" class="linea"></span>
+                    </div>
+                </div>
+
+                <div class="seccion abajo">
+                    <strong>Válido hasta:</strong> 14/01/2027<br>
+                    Términos y condiciones: no se vale decir que cambiaste el cupón si te regalé primero el juego antes de reclamarlo.
+                </div>
+            </div>
+
+            <div class="cupon-cards" data-cupon="cupon_skin" data-tipo="fijo">
+                <div class="seccion izquierda">
+                    <div class="estatus usable">USABLE</div>
+                    <button class="btn reclamar">Reclamar</button>
+                </div>
+
+                <div class="seccion derecha">
+                    <p class="titulo">Cupón válido por</p>
+                    <p class="subtitulo nombre-cupon">1 SKIN</p>
+                    <div class="campo">
+                        Juego:
+                        <span contenteditable="true" class="linea"></span>
+                    </div>
+                    <div class="campo">
+                        Nombre de skin:
+                        <span contenteditable="true" class="linea"></span>
+                    </div>
+                </div>
+
+                <div class="seccion abajo">
+                    <strong>Válido hasta:</strong> 14/01/2027<br>
+                    Términos y condiciones: La skin puede ser de cualquier juego y lo mismo que el primer cupón.
+                </div>
+            </div>
+
+            <div class="cupon-cards" data-cupon="cupon_paquete_skins" data-tipo="fijo">
+                <div class="seccion izquierda">
+                    <div class="estatus usable">USABLE</div>
+                    <button class="btn reclamar">Reclamar</button>
+                </div>
+
+                <div class="seccion derecha">
+                    <p class="titulo">Cupón válido por</p>
+                    <p class="subtitulo nombre-cupon">1 PAQUETE DE SKINS</p>
+                    <div class="campo">
+                        Juego:
+                        <span contenteditable="true" class="linea"></span>
+                    </div>
+                    <div class="campo">
+                        Nombre del paquete:
+                        <span contenteditable="true" class="linea"></span>
+                    </div>
+                </div>
+
+                <div class="seccion abajo">
+                    <strong>Válido hasta:</strong> 14/01/2027<br>
+                    Términos y condiciones: Puedes elegir el paquete de cualquier juego y lo mismo que el primer cupón.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="categoria-label">
+            <h2>🌟 Cupones Personalizables</h2>
+        </div>
+
+        <div class="palette-samira">
+            <div class="cupon-cards" data-cupon="cupon_elegible1">
+                <div class="seccion izquierda">
+                    <div class="estatus usable">USABLE</div>
+                    <button class="btn reclamar">Reclamar</button>
+                </div>
+
+                <div class="seccion derecha">
+                    <p class="titulo">Cupón válido por</p>
+                    <div class="campo subtitulo"><span contenteditable="true" class="linea nombre-cupon"></span></div>
+                    <div class="campo">
+                        Nombre/lugar/pagina:
+                        <span contenteditable="true" class="linea"></span>
+                    </div>
+                    <div class="campo">
+                        Espesificaciones:
+                        <span contenteditable="true" class="linea"></span>
+                    </div>
+                </div>
+
+                <div class="seccion abajo">
+                    <strong>Válido hasta:</strong> 14/01/2027<br>
+                    Términos y condiciones: Puede ser cualquier cosa, algo digital, físico, un favor etc.
+                </div>
+            </div>
+
+            <div class="cupon-cards" data-cupon="cupon_elegible2">
+                <div class="seccion izquierda">
+                    <div class="estatus usable">USABLE</div>
+                    <button class="btn reclamar">Reclamar</button>
+                </div>
+
+                <div class="seccion derecha">
+                    <p class="titulo">Cupón válido por</p>
+                    <div class="campo subtitulo"><span contenteditable="true" class="linea nombre-cupon"></span></div>
+                    <div class="campo">
+                        Nombre/lugar/pagina:
+                        <span contenteditable="true" class="linea"></span>
+                    </div>
+                    <div class="campo">
+                        Espesificaciones:
+                        <span contenteditable="true" class="linea"></span>
+                    </div>
+                </div>
+
+                <div class="seccion abajo">
+                    <strong>Válido hasta:</strong> 14/01/2027<br>
+                    Términos y condiciones: Puede ser cualquier cosa, algo digital, físico, un favor etc.
+                </div>
+            </div>
+        </div>
+
+        <div class="palette-leona-diana">
+
+            <div class="cupon-cards" data-cupon="cupon_elegible3">
+                <div class="seccion izquierda">
+                    <div class="estatus usable">USABLE</div>
+                    <button class="btn reclamar">Reclamar</button>
+                </div>
+
+                <div class="seccion derecha">
+                    <p class="titulo">Cupón válido por</p>
+                    <div class="campo subtitulo"><span contenteditable="true" class="linea nombre-cupon"></span></div>
+                    <div class="campo">
+                        Nombre/lugar/pagina:
+                        <span contenteditable="true" class="linea"></span>
+                    </div>
+                    <div class="campo">
+                        Espesificaciones:
+                        <span contenteditable="true" class="linea"></span>
+                    </div>
+                </div>
+
+                <div class="seccion abajo">
+                    <strong>Válido hasta:</strong> 05/04/2026<br>
+                    Términos y condiciones: Puede ser cualquier cosa, algo digital, físico, un favor etc.
+                </div>
+            </div>
+
+            <div class="cupon-cards" data-cupon="cupon_elegible4">
+                <div class="seccion izquierda">
+                    <div class="estatus usable">USABLE</div>
+                    <button class="btn reclamar">Reclamar</button>
+                </div>
+
+                <div class="seccion derecha">
+                    <p class="titulo">Cupón válido por</p>
+                    <div class="campo subtitulo"><span contenteditable="true" class="linea nombre-cupon"></span></div>
+                    <div class="campo">
+                        Nombre/lugar/pagina:
+                        <span contenteditable="true" class="linea"></span>
+                    </div>
+                    <div class="campo">
+                        Espesificaciones:
+                        <span contenteditable="true" class="linea"></span>
+                    </div>
+                </div>
+
+                <div class="seccion abajo">
+                    <strong>Válido hasta:</strong> 05/04/2026<br>
+                    Términos y condiciones: Puede ser cualquier cosa, algo digital, físico, un favor etc.
+                </div>
+            </div>
+        </div>
+
+        <div class="palette-killjoy">
+
+            <div class="cupon-cards" data-cupon="prueba_fija" data-tipo="fijo">
+                <div class="seccion izquierda">
+                    <div class="estatus usable">USABLE</div>
+                    <button class="btn reclamar">Reclamar</button>
+                </div>
+
+                <div class="seccion derecha">
+                    <p class="titulo">Cupón válido por</p>
+                    <p class="subtitulo nombre-cupon">1 COMIDA</p>
+                    <div class="campo">
+                        Lugar:
+                        <span contenteditable="true" class="linea"></span>
+                    </div>
+                    <div class="campo">
+                        Fecha:
+                        <span contenteditable="true" class="linea"></span>
+                    </div>
+                </div>
+
+                <div class="seccion abajo">
+                    <strong>Válido hasta:</strong> 05/04/2026<br>
+                    Términos y condiciones: El cupón debe ser reclamado para ser canjeado no a la inversa.
+                </div>
+            </div>
+
+            <div class="cupon-cards" data-cupon="pryeba_variable">
+                <div class="seccion izquierda">
+                    <div class="estatus usable">USABLE</div>
+                    <button class="btn reclamar">Reclamar</button>
+                </div>
+
+                <div class="seccion derecha">
+                    <p class="titulo">Cupón válido por</p>
+                    <div class="campo subtitulo"><span contenteditable="true" class="linea nombre-cupon"></span></div>
+                    <div class="campo">
+                        Nombre/lugar/pagina:
+                        <span contenteditable="true" class="linea"></span>
+                    </div>
+                    <div class="campo">
+                        Espesificaciones:
+                        <span contenteditable="true" class="linea"></span>
+                    </div>
+                </div>
+
+                <div class="seccion abajo">
+                    <strong>Válido hasta:</strong> 05/04/2026<br>
+                    Términos y condiciones: El cupón debe ser reclamado para ser canjeado no a la inversa.
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+
+/* CONFIGURACIÓN */
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxfH4_Fwyi8G38rBIIy7psMsb7THkYU_-GxlRBkQ4PnUla2nhkl8t72KebmL806VAzksg/exec";
+
+/* UTILIDADES */
+function obtenerNombreCupon(cupon) {
+  const nombre = cupon.querySelector(".nombre-cupon");
+  return nombre ? nombre.innerText.trim() : "";
+}
+
+function obtenerCampos(cupon) {
+  return Array.from(
+    cupon.querySelectorAll(".linea:not(.nombre-cupon)")
+  ).map(el => el.innerText.trim());
+}
+
+/* CARGA INICIAL – LEER ESTATUS */
+document.querySelectorAll(".cupon-cards").forEach(cupon => {
+  const id = cupon.dataset.cupon;
+  if (!id) return;
+
+  fetch(`${WEB_APP_URL}?action=getStatus&id=${encodeURIComponent(id)}`)
+    .then(res => res.json())
+    .then(data => {
+      if (!data.estatus) return;
+
+      const estatusEl = cupon.querySelector(".estatus");
+      const btn = cupon.querySelector(".btn");
+
+      estatusEl.textContent = data.estatus;
+      estatusEl.classList.remove("usable", "reclamado", "canjeado");
+
+      if (data.estatus === "USABLE") {
+        estatusEl.classList.add("usable");
+      }
+
+      if (data.estatus === "RECLAMADO") {
+        estatusEl.classList.add("reclamado");
+        btn.disabled = true;
+        btn.textContent = "Reclamado";
+      }
+
+      if (data.estatus === "CANJEADO") {
+        estatusEl.classList.add("canjeado");
+        btn.disabled = true;
+        btn.textContent = "Canjeado";
+      }
+    })
+    .catch(err => console.error("Error al consultar estatus:", err));
+});
+
+/* EVENTO RECLAMAR CUPÓN */
+document.querySelectorAll(".btn.reclamar").forEach(btn => {
+  btn.addEventListener("click", function () {
+
+    const cupon = this.closest(".cupon-cards");
+    const estatusEl = cupon.querySelector(".estatus");
+
+    // Seguridad: solo usable
+    if (!estatusEl.classList.contains("usable")) return;
+
+    const nombreCupon = obtenerNombreCupon(cupon);
+    const campos = obtenerCampos(cupon);
+
+    // Validaciones
+    if (!nombreCupon) {
+      alert("Debes indicar el nombre del cupón");
+      return;
+    }
+
+    if (campos.some(v => !v)) {
+      alert("Completa todos los campos");
+      return;
+    }
+
+    // Confirmación
+    if (!confirm(`¿Estás segura de reclamar este cupón?\n\n${nombreCupon}`)) {
+      return;
+    }
+
+    // UI inmediata
+    const textoOriginal = this.textContent;
+    this.disabled = true;
+    this.textContent = "Reclamando...";
+
+    // Envío a Google Sheets usando GET
+    const url = `${WEB_APP_URL}?action=reclamar&id=${encodeURIComponent(cupon.dataset.cupon)}&nombre=${encodeURIComponent(nombreCupon)}&campo1=${encodeURIComponent(campos[0] || "")}&campo2=${encodeURIComponent(campos[1] || "")}`;
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        console.log("Respuesta backend:", data);
+
+        if (data.status === "OK") {
+          // Éxito
+          estatusEl.textContent = "RECLAMADO";
+          estatusEl.classList.replace("usable", "reclamado");
+          this.textContent = "Reclamado";
+          cupon.classList.add("reclamado-anim");
+          
+          alert(`✅ ¡Cupón reclamado exitosamente!\n\nFecha: ${data.fecha}`);
+        } else if (data.status === "YA_RECLAMADO") {
+          // Ya fue reclamado
+          alert("⚠️ Este cupón ya fue reclamado anteriormente");
+          estatusEl.textContent = "RECLAMADO";
+          estatusEl.classList.replace("usable", "reclamado");
+          this.textContent = "Reclamado";
+        } else {
+          // Error
+          alert("❌ Error al reclamar cupón: " + (data.mensaje || data.error || "Desconocido"));
+          this.textContent = textoOriginal;
+          this.disabled = false;
+        }
+      })
+      .catch(err => {
+        console.error("Error enviando a Sheets:", err);
+        alert("❌ Error de conexión. Revisa la consola para más detalles.");
+        this.textContent = textoOriginal;
+        this.disabled = false;
+      });
+  });
+});
+
+</script>
+
+
+</body>
+</html>
